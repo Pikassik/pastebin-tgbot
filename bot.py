@@ -4,9 +4,8 @@ import sqlite3
 from paste import paste
 import os
 from database_manager import DBManager, db_exception_keeper
-
-MAX_MESSAGE_LENGTH = 4096
-MAX_COMMENT_LENGTH = 1000
+from misc import MAX_MESSAGE_LENGTH, MAX_COMMENT_LENGTH, PASTE_FORMATS,\
+    EXPIRE_DATES
 
 
 class PastebinBot:
@@ -55,44 +54,25 @@ class PastebinBot:
                                                  self._set_expire_date)
         self.dispatcher.add_handler(set_expire_date_handler)
         
-        self.paste_formats = {
-            'c': 'c',
-            'cpp': 'cpp',
-            'py': 'python',
-            'h': 'cpp',
-            'java': 'java'
-        }
+        self.paste_formats = PASTE_FORMATS
         
-        self.expire_dates = {
-            'N': 'вечность',
-            '10M': '10 минут',
-            '1H': '1 час',
-            '1D': '1 день',
-            '1W': '1 неделя',
-            '2W': '2 недели',
-            '1M': '1 месяц',
-            '6M': '6 месяцев',
-            '1Y': '1 год'
-        }
+        self.expire_dates = EXPIRE_DATES
         
     @db_exception_keeper
     def _get_settings(self, update, context):
-        try:
-            user_info = self.db_manager.get_user_info(update.message.chat_id)[0]
-            user_info = list(user_info)
-            user_info[1] = ': ' + user_info[1] if user_info[1] != '' else\
-                'а нет'
-            user_info[2] = self.expire_dates[user_info[2]]
-            user_info[4] = 'public' if user_info[4] == 0 else 'unlisted'
-            context.bot.send_message(chat_id=update.message.chat_id,
-                                     text='Текущие настройки:\n'
-                                          'Тэг{1}\n'
-                                          'Время жизни ссылки: {2}\n'
-                                          'Формат: {3}\n'
-                                          'Режим приватности: {4}'.
-                                          format(*user_info))
-        except:
-            traceback.print_exc()
+        user_info = self.db_manager.get_user_info(update.message.chat_id)[0]
+        user_info = list(user_info)
+        user_info[1] = ': ' + user_info[1] if user_info[1] != '' else\
+            'а нет'
+        user_info[2] = self.expire_dates[user_info[2]]
+        user_info[4] = 'public' if user_info[4] == 0 else 'unlisted'
+        context.bot.send_message(chat_id=update.message.chat_id,
+                                 text='Текущие настройки:\n'
+                                      'Тэг{1}\n'
+                                      'Время жизни ссылки: {2}\n'
+                                      'Формат: {3}\n'
+                                      'Режим приватности: {4}'.
+                                      format(*user_info))
 
     @db_exception_keeper
     def _set_expire_date(self, update, context):
@@ -169,8 +149,8 @@ class PastebinBot:
         if len(update.message.text.split()) == 2 and (
                 update.message.text.split()[1] in ('public', 'unlisted')):
             self.db_manager.update_private(update.message.chat_id, 0 if update.
-                                         message.text.
-                                         split()[1] == 'public' else 1)
+                                           message.text.
+                                           split()[1] == 'public' else 1)
             context.bot.send_message(chat_id=update.message.chat_id,
                                      text='Режим приватности установлен')
         elif len(update.message.text) == 1:
@@ -185,8 +165,8 @@ class PastebinBot:
     @db_exception_keeper
     def _set_paste_format(self, update, context):
         if len(update.message.text.split()) == 2:
-            self.db_manager.update_paste_format(update.message.chat_id, update.message.
-                                         text.split()[1])
+            self.db_manager.update_paste_format(update.message.chat_id, update.
+                                                message.text.split()[1])
             context.bot.send_message(chat_id=update.message.chat_id,
                                      text='Формат установлен')
         elif len(update.message.text) == 1:
@@ -200,9 +180,9 @@ class PastebinBot:
     @db_exception_keeper
     def _set_tag(self, update, context):
         if len(update.message.text.split()) > 1:
-            self.db_manager.update_tag(update.message.chat_id, ''.join(update.message.
-                                text.split()[1:]) if update.message.text.
-                                split()[1] != '-e' else '')
+            self.db_manager.update_tag(update.message.chat_id, ''.join(update.
+                                       message.text.split()[1:]) if update.
+                                       message.text.split()[1] != '-e' else '')
             context.bot.send_message(chat_id=update.message.chat_id,
                                      text='Тэг установлен')
         else:
@@ -300,4 +280,3 @@ class PastebinBot:
 
     def run_loop(self):
         self.updater.start_polling(poll_interval=0.01)
-
