@@ -1,7 +1,7 @@
-TGTOKEN = '<your telegram token>'
-PBTOKEN = '<tour pastebin dev token>'
 MAX_MESSAGE_LENGTH = 4096
 MAX_COMMENT_LENGTH = 1000
+PB_URL = 'https://pastebin.com/'
+PB_RELATIVE_URL_LENGTH = 8
 PASTE_FORMATS = {
     'c': 'c',
     'cpp': 'cpp',

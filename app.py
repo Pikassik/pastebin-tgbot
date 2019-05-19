@@ -1,9 +1,9 @@
 from bot import PastebinBot
-import misc
+import tokens
 
 
 def main():
-    bot = PastebinBot(misc.TGTOKEN, misc.PBTOKEN)
+    bot = PastebinBot(tokens.TG_TOKEN, tokens.PB_TOKEN)
     bot.run_loop()
 
 

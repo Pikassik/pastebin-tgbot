@@ -1,8 +1,7 @@
 import requests
-import misc
 
 
-def paste(code, name='unnamed', paste_format='text',
+def paste(code, token, name='unnamed', paste_format='text',
           expire_date='1H', private='0'):
     options = {
         'api_paste_name': name,
@@ -11,10 +10,10 @@ def paste(code, name='unnamed', paste_format='text',
         'api_paste_private': private,
         'api_option': 'paste',
         'api_user_key': '',
-        'api_dev_key': misc.PBTOKEN,
+        'api_dev_key': token,
         'api_paste_code': code
     }
-    
+
     response = requests.post('https://pastebin.com/api/api_post.php',
                              data=options)
     return response.text

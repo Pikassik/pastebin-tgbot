@@ -20,7 +20,7 @@ class DBManager:
                 """SELECT * FROM links WHERE chat_id == ? AND link == ?;""",
                 (chat_id, link))
             return cursor.fetchall()
-    
+
     @staticmethod
     def insert_link(chat_id, file_name, tag, comment, date, link):
         with sqlite3.connect('links') as connect:
@@ -48,7 +48,6 @@ class DBManager:
                            [chat_id])
             return cursor.fetchall()
 
-
     @staticmethod
     def delete_link(chat_id, link):
         with sqlite3.connect('links') as connect:
@@ -64,7 +63,7 @@ class DBManager:
             cursor.execute("""SELECT * FROM users WHERE chat_id == ?;""",
                            [chat_id])
             return cursor.fetchall()
-        
+
     @staticmethod
     def insert_user(chat_id):
         with sqlite3.connect('links') as connect:
