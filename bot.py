@@ -70,7 +70,7 @@ class PastebinBot:
                                       'Формат: {2}\n'
                                       'Режим приватности: {3}'.
                                       format(current_tag, current_expire_date,
-                                             current_expire_date,
+                                             current_paste_format,
                                              current_private))
 
     @db_exception_keeper
